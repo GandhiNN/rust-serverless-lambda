@@ -1,7 +1,7 @@
 use lambda_http::{run, service_fn};
 use lambda_runtime::{Error, tracing};
-mod handler;
-use handler::function_handler;
+mod event_handler;
+use event_handler::function_handler;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
