@@ -1,0 +1,10 @@
+[package]
+name = "my-first-lambda"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+lambda_http = { workspace=true }
+tokio = { workspace = true, features = ["macros"] }
+tracing = { workspace=true, features = ["log"] }
+lambda_runtime = { workspace=true }
