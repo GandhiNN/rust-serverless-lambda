@@ -6,5 +6,5 @@ cargo lambda watch
 
 2. Invoke in another terminal:
 ```
-cargo lambda --invoke --data-ascii "{ \"hello\": \"world\" }" web-scraper
+cargo lambda invoke --data-ascii "{ \"hello\": \"world\" }" web-scraper
 ```

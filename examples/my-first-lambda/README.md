@@ -11,6 +11,13 @@ docker run -rm -p 8080:8080 the-first-lambda:latest
 ``` 
 
 3. Invoke the function
+
+When running as docker container:
 ```
 curl -X POST --data '{"version":"2.0","rawQueryString":"name=beeb","requestContext":{"http":{"method":"GET"},"timeEpoch":0}}' http://localhost:8080/2015-03-31/functions/function/invocations
+```
+
+When running using `cargo lambda watch`
+```
+cargo lambda invoke --data-ascii "{\"version\":\"2.0\",\"rawQueryString\":\"name=beeb\",\"requestContext\":{\"http\":{\"method\":\"GET\"},\"timeEpoch\":0}}" my-first-lambda
 ```
