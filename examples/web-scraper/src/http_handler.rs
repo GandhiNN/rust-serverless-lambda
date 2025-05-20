@@ -1,6 +1,9 @@
-mod common;
 use lambda_http::{Body, Error, Request, Response};
-use prettytable::Row;
+use prettytable::{Row, Table};
+use reqwest::{Client, header::HeaderMap};
+use scraper::{Html, Selector};
+use similar::{ChangeTag, TextDiff};
+use std::fs::{self, File};
 
 // URL which lists all available Lambda runtime
 const AWS_LAMBDA_RUNTIMES_URL: &str =
@@ -19,14 +22,14 @@ const TMP_PATH: &str = "/tmp/tmp.csv";
 const OK_MESSAGE: &str = "NO CHANGES";
 const WARNING_MESSAGE: &str = "CHANGES DETECTED";
 
-pub(crate) async fn handler(_event: Request) -> Result<Response<Body>, Error> {
-    let client = common::get_client();
-    let tables = scrape(client).await?;
+pub(crate) async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
+    let client = get_client();
+    let tables: Vec<(String, _, _)> = scrape(client).await?;
 
-    let mut message = OK_MESSAGE;
+    let mut _message = OK_MESSAGE;
     for (path, current_table, new_table) in tables {
-        if common::diff_tables(current_table, new_table) {
-            message = WARNING_MESSAGE;
+        if diff_tables(current_table, new_table) {
+            _message = WARNING_MESSAGE;
             println!("Changes detected in {}", path);
         }
     }
@@ -39,7 +42,7 @@ pub(crate) async fn handler(_event: Request) -> Result<Response<Body>, Error> {
     Ok(resp)
 }
 
-async fn scrape(client: Client) {
+async fn scrape(client: Client) -> Result<Vec<(String, Table, Table)>, Error> {
     let response = client.get(AWS_LAMBDA_RUNTIMES_URL).send().await?;
 
     // Get the page as text
@@ -64,7 +67,7 @@ async fn scrape(client: Client) {
         let table_ref = document.select(&table_selector).nth(*index).unwrap();
         let thead_tr_ref = table_ref.select(&thead_tr_selector).next().unwrap();
 
-        let hreaders_row = thead_tr_ref
+        let headers_row = thead_tr_ref
             .text()
             .map(|t| t.trim())
             .filter(|t| !t.is_empty())

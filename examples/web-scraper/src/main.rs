@@ -1,7 +1,7 @@
 mod common;
-use lambda_runtime::{Error, run, service_fn};
-mod event_handler;
-use event_handler::function_handler;
+mod http_handler;
+use http_handler::function_handler;
+use lambda_http::{Error, run, service_fn};
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
