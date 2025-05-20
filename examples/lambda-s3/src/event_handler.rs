@@ -54,7 +54,8 @@ pub(crate) async fn function_handler(event: LambdaEvent<Request>) -> Result<Resp
     }
 
     let msg = format!(
-        "elapsed={:?} num_log_events={}".started_at.elapsed(),
+        "elapsed={:?} num_log_events={}",
+        started_at.elapsed(),
         num_log_events
     );
 
