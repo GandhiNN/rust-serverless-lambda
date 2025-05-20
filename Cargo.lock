@@ -1850,6 +1850,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "kinesis-message-processor"
+version = "0.1.0"
+dependencies = [
+ "aws-config",
+ "aws_lambda_events",
+ "lambda_runtime",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "lambda-s3"
 version = "0.1.0"
 dependencies = [
@@ -1870,8 +1884,11 @@ dependencies = [
 name = "lambda-s3-image"
 version = "0.1.0"
 dependencies = [
+ "aws-config",
+ "aws-sdk-s3",
  "aws_lambda_events",
  "lambda_runtime",
+ "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",
