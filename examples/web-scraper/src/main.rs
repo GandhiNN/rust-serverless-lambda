@@ -1,5 +1,5 @@
-use lambda_runtime::{Error, run, service_fn};
 mod common;
+use lambda_runtime::{Error, run, service_fn};
 mod event_handler;
 use event_handler::function_handler;
 
