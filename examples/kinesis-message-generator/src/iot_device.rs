@@ -1,16 +1,24 @@
+use aws_config::Region;
+use aws_config::meta::region::RegionProviderChain;
+use aws_sdk_kinesis::Client;
+use aws_sdk_kinesis::primitives::Blob;
+use rand::Rng;
+use serde::{Deserialize, Serialize};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
+
 pub struct IoTDevice {
     name: String,
 }
 
 impl IoTDevice {
-    fn new(name: String) -> Self {
+    pub fn new(name: String) -> Self {
         IoTDevice { name }
     }
 
     pub async fn send_temperature_data(&self, client: &Client, kinesis_stream_arn: &String) -> () {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        let temperature_reading = TemperatureReading::new(rng.gen_range(10.0..25.6));
+        let temperature_reading = TemperatureReading::new(rng.random_range(10.0..25.6));
 
         let serialized_data = serde_json::to_string(&temperature_reading).unwrap();
 
@@ -43,7 +51,7 @@ impl TemperatureReading {
     fn new(temperature: f32) -> Self {
         Self {
             temperature,
-            reading_timestamp: SystemTime::new()
+            reading_timestamp: SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .unwrap()
                 .as_secs_f32(),
@@ -51,7 +59,7 @@ impl TemperatureReading {
     }
 }
 
-async fn new_client(is_local: String) -> Client {
+pub async fn new_client(is_local: String) -> Client {
     let region_provider = RegionProviderChain::default_provider().or_else("eu-west-1");
     let sdk_config = aws_config::from_env().region(region_provider).load().await;
     if is_local.to_ascii_lowercase() == "true".to_string() {
@@ -61,4 +69,7 @@ async fn new_client(is_local: String) -> Client {
             .build();
         return Client::from_conf(config);
     }
+
+    let config = aws_sdk_kinesis::config::Builder::from(&sdk_config).build();
+    Client::from_conf(config)
 }

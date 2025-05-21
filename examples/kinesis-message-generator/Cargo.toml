@@ -3,13 +3,17 @@ name = "kinesis-message-generator"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "iot_device"
+path = "src/iot_device.rs"
+
 [dependencies]
 lambda_runtime = { workspace = true }
 tokio = { workspace = true, features = ["full"] }
 tracing-subscriber = { workspace = true }
 tracing = { workspace = true }
 serde_json = { workspace = true }
-aws-config = { workspace = true }
+aws-config = { workspace = true, features = ["behaviour-version-latest"] }
 aws_lambda_events = { workspace = true }
 serde = { workspace = true, features = ["derive"] }
 aws-sdk-kinesis = { workspace = true }
